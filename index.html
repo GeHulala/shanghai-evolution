@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上海建筑历史 · History of Shanghai Architecture</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI','Microsoft YaHei',sans-serif;overflow:hidden}
+#container{width:1100px;height:680px;border-radius:14px;position:relative;overflow:hidden;box-shadow:0 20px 80px rgba(0,0,0,0.7);cursor:default;background:#1a1a2e}
+#sky{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#0d0d2b,#1a1a4e 8%,#2d2d6e 18%,#4a6fa5 30%,#6d9bc5 40%,#87CEEB 48%,#b0d4f0 55%,#c8e0f5 62%)}
+#sky::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 70% 20%,rgba(255,200,100,0.08) 0%,transparent 60%)}
+#sun{position:absolute;top:40px;right:100px;width:70px;height:70px;background:radial-gradient(circle at 40% 40%,#fff8dc,#FFD700 30%,#FFA500 60%,#FF8C00 100%);border-radius:50%;box-shadow:0 0 60px #FFD700,0 0 120px rgba(255,215,0,0.3);opacity:0;transition:opacity 3s}
+.cloud{position:absolute;background:radial-gradient(ellipse at 40% 50%,rgba(255,255,255,0.9),rgba(255,255,255,0.4) 50%,transparent 70%);border-radius:50%;opacity:0;transition:opacity 3s}
+.cloud1{top:55px;left:8%;width:160px;height:50px}.cloud2{top:90px;left:55%;width:200px;height:55px}.cloud3{top:35px;left:75%;width:140px;height:42px}.cloud4{top:70px;left:35%;width:120px;height:38px}
+#river-bg{position:absolute;bottom:15%;left:0;width:100%;height:30%;z-index:1;opacity:0;transition:opacity 3s;overflow:hidden}
+#river-bg .water{position:absolute;bottom:0;left:0;width:100%;height:65%;background:linear-gradient(180deg,#3a7cc4,#4a8cd4 20%,#5a9ce4 40%,#4a8cd4 60%,#3a7cc4 80%,#2a6cb4 100%)}
+#river-bg .water::before{content:'';position:absolute;top:0;left:0;width:200%;height:100%;background:repeating-linear-gradient(90deg,transparent 0,transparent 40px,rgba(255,255,255,0.15) 40px,rgba(255,255,255,0.15) 42px,transparent 42px,transparent 80px,rgba(255,255,255,0.08) 80px,rgba(255,255,255,0.08) 82px);animation:flowWater 6s linear infinite}
+@keyframes flowWater{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+#river-bg .shore{position:absolute;bottom:63%;left:0;width:100%;height:8%;background:linear-gradient(180deg,#6a8a4a,#5a7a3a);border-radius:50% 50% 0 0/100% 100% 0 0}
+#ground{position:absolute;bottom:0;left:0;width:100%;height:18%;background:linear-gradient(180deg,#5a7a3a,#4a6a2a 20%,#3a5a1a 100%);z-index:3}
+#ground::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(0,0,0,0.08) 40px,rgba(0,0,0,0.08) 41px)}
+#city-silhouette{position:absolute;bottom:30%;left:0;width:100%;height:20%;background:linear-gradient(180deg,rgba(80,110,140,0.25),rgba(60,80,100,0.35) 50%,rgba(40,60,80,0.25) 100%);z-index:2;opacity:0;transition:opacity 3s}
+#title-area{position:absolute;top:18px;left:50%;transform:translateX(-50%);text-align:center;z-index:30;opacity:0;transition:opacity 2s}
+#title-area .cn{font-size:36px;font-weight:bold;color:#fff;text-shadow:0 0 30px rgba(0,0,0,0.9),0 2px 10px rgba(0,0,0,0.8);letter-spacing:6px;font-family:'Microsoft YaHei','SimHei',sans-serif}
+#title-area .en{font-size:15px;color:rgba(255,255,255,0.8);letter-spacing:2px;text-shadow:0 0 20px rgba(0,0,0,0.9);margin-top:2px}
+#title-area .star{color:#FFD700;font-size:22px;display:inline-block;animation:sparkle 2s ease-in-out infinite}
+@keyframes sparkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.3)}}
+#year-display{position:absolute;top:100px;left:50%;transform:translateX(-50%);font-size:60px;font-weight:bold;color:#fff;text-shadow:0 0 30px rgba(0,0,0,0.9),0 0 60px rgba(0,0,0,0.5);z-index:20;font-family:Georgia,serif;background:rgba(0,0,0,0.35);padding:8px 30px;border-radius:12px;backdrop-filter:blur(5px);letter-spacing:4px;opacity:0;transition:opacity 1.5s}
+#buildings-layer{position:absolute;bottom:16%;left:0;width:100%;height:72%;z-index:6}
+.building{position:absolute;bottom:0;cursor:pointer;opacity:0;transition:opacity 0.6s}
+.building.visible{opacity:1}
+.building:hover{filter:brightness(1.15) drop-shadow(0 0 20px rgba(255,215,0,0.3))}
+.building .label{position:absolute;top:-48px;left:50%;transform:translateX(-50%);color:#fff;font-size:12px;font-weight:bold;text-align:center;background:rgba(0,0,0,0.65);padding:3px 10px;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.6s;font-family:'Microsoft YaHei',sans-serif}
+.building.visible .label{opacity:1}
+.building .year-badge{position:absolute;top:-76px;left:50%;transform:translateX(-50%);color:#FFD700;font-size:15px;font-weight:bold;text-shadow:0 0 15px rgba(255,215,0,0.8);pointer-events:none;opacity:0;transition:opacity 0.6s;background:rgba(0,0,0,0.4);padding:2px 8px;border-radius:4px}
+.building.visible .year-badge{opacity:1}
+
+/* Building 1 - Peace Hotel (1929) */
+.building-1{left:4%;width:50px;height:0;transition:height 2s cubic-bezier(0.25,0.46,0.45,0.94);z-index:5}
+.building-1.grown{height:100px}
+.building-1 .body{width:100%;height:100%;background:linear-gradient(90deg,#b8a070,#d4bf8a 30%,#e8d4a0 50%,#d4bf8a 70%,#b8a070);position:relative;box-shadow:-2px 0 8px rgba(0,0,0,0.2),2px 0 8px rgba(0,0,0,0.2)}
+.building-1 .body::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:44px;height:10px;background:linear-gradient(90deg,#2a2a2a,#3a3a3a,#2a2a2a);border-radius:2px}
+.building-1 .windows{position:absolute;top:18px;left:5px;width:40px;height:70px;background:repeating-linear-gradient(180deg,rgba(255,240,180,0.7) 0,rgba(255,240,180,0.7) 4px,transparent 4px,transparent 8px)}
+.building-1 .base{position:absolute;bottom:0;left:0;width:100%;height:12px;background:linear-gradient(90deg,#8a7a5a,#a09070,#8a7a5a);border-top:2px solid #b8a070}
+
+/* Building 2 - Oriental Pearl Tower (1995) */
+.building-2{left:18%;width:35px;height:0;transition:height 2.5s cubic-bezier(0.25,0.46,0.45,0.94);z-index:7}
+.building-2.grown{height:260px}
+.building-2 .pole{position:absolute;top:0;left:50%;transform:translateX(-50%);width:6px;height:100%;background:linear-gradient(180deg,#c0c0c0,#909090,#606060);border-radius:3px}
+.building-2 .sphere1{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:14px;height:20px;background:radial-gradient(ellipse at 40% 30%,#ffccdd,#cc4477 50%,#882244);border-radius:50%;box-shadow:0 0 15px rgba(200,50,100,0.4)}
+.building-2 .sphere2{position:absolute;top:70px;left:50%;transform:translateX(-50%);width:28px;height:32px;background:radial-gradient(ellipse at 40% 30%,#ffddee,#cc4477 40%,#992255);border-radius:50%;box-shadow:0 0 20px rgba(200,50,100,0.5)}
+.building-2 .sphere3{position:absolute;top:140px;left:50%;transform:translateX(-50%);width:22px;height:24px;background:radial-gradient(ellipse at 40% 30%,#ffccdd,#bb3366 50%,#881144);border-radius:50%;box-shadow:0 0 15px rgba(200,50,100,0.3)}
+.building-2 .base{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:10px;background:linear-gradient(90deg,#888,#aaa,#888);border-radius:2px}
+.building-2 .antenna{position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:2px;height:18px;background:#aaa}
+.building-2 .glow{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:80px;height:220px;background:radial-gradient(ellipse,rgba(255,100,150,0.08),transparent 70%);pointer-events:none}
+
+/* Building 3 - Jin Mao Tower (1999) */
+.building-3{left:34%;width:55px;height:0;transition:height 2.8s cubic-bezier(0.25,0.46,0.45,0.94);z-index:8}
+.building-3.grown{height:250px}
+.building-3 .body{width:100%;height:100%;background:linear-gradient(180deg,#c8d0d8,#a0b0c0 20%,#8898a8 40%,#788898 60%,#687888 80%,#586878 100%);position:relative;box-shadow:-3px 0 12px rgba(0,0,0,0.25),3px 0 12px rgba(0,0,0,0.25)}
+.building-3 .body::before{content:'';position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:30px;height:18px;background:linear-gradient(180deg,#d8d8d8,#a0a8b0);border-radius:4px 4px 0 0}
+.building-3 .body::after{content:'';position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:14px;height:6px;background:#D4AF37;border-radius:2px;box-shadow:0 0 8px rgba(212,175,55,0.5)}
+.building-3 .windows{position:absolute;top:6px;left:6px;width:43px;height:230px;background:repeating-linear-gradient(180deg,rgba(220,240,255,0.5) 0,rgba(220,240,255,0.5) 2px,transparent 2px,transparent 6px)}
+.building-3 .deco{position:absolute;top:20px;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 18px,rgba(180,160,120,0.15) 18px,rgba(180,160,120,0.15) 19px)}
+
+/* Building 4 - Shanghai WFC (2008) */
+.building-4{left:48%;width:60px;height:0;transition:height 3s cubic-bezier(0.25,0.46,0.45,0.94);z-index:9}
+.building-4.grown{height:300px}
+.building-4 .body{width:100%;height:100%;background:linear-gradient(180deg,#e0e8f0,#c8d4e0 15%,#b0c0d0 30%,#98a8b8 50%,#8090a0 70%,#687888 100%);position:relative;box-shadow:-3px 0 15px rgba(0,0,0,0.25),3px 0 15px rgba(0,0,0,0.25)}
+.building-4 .body::before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:46px;height:14px;background:linear-gradient(180deg,#e8ecf0,#c0c8d0);border-radius:4px 4px 0 0}
+.building-4 .hole{position:absolute;top:80px;left:50%;transform:translateX(-50%);width:24px;height:50px;background:rgba(100,150,220,0.25);clip-path:polygon(50% 0%,0% 100%,100% 100%);border:1px solid rgba(200,220,255,0.2)}
+.building-4 .windows{position:absolute;top:12px;left:6px;width:48px;height:270px;background:repeating-linear-gradient(180deg,rgba(200,225,255,0.4) 0,rgba(200,225,255,0.4) 1px,transparent 1px,transparent 4px)}
+.building-4 .ledge{position:absolute;top:20px;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 29px,rgba(0,0,0,0.06) 29px,rgba(0,0,0,0.06) 30px)}
+
+/* Building 5 - China Art Museum (2010) */
+.building-5{left:63%;width:80px;height:0;transition:height 2.2s cubic-bezier(0.25,0.46,0.45,0.94);z-index:6}
+.building-5.grown{height:160px}
+.building-5 .body{width:100%;height:100%;background:linear-gradient(180deg,#cc3a3a,#b02a2a 30%,#8b1a1a 60%,#6a0a0a 100%);position:relative;box-shadow:-3px 0 10px rgba(0,0,0,0.3),3px 0 10px rgba(0,0,0,0.3)}
+.building-5 .body::before{content:'';position:absolute;top:-40px;left:-6px;width:92px;height:44px;background:linear-gradient(180deg,#dd4a4a,#bb3030);clip-path:polygon(0% 100%,20% 0%,80% 0%,100% 100%)}
+.building-5 .body::after{content:'';position:absolute;top:-48px;left:16px;width:48px;height:12px;background:linear-gradient(90deg,#aa2828,#cc3a3a,#aa2828);border-radius:2px}
+.building-5 .windows{position:absolute;top:12px;left:10px;width:60px;height:130px;background:repeating-linear-gradient(0deg,transparent,transparent 12px,rgba(255,200,100,0.35) 12px,rgba(255,200,100,0.35) 15px)}
+
+/* Building 6 - Shanghai Tower (2015) */
+.building-6{left:78%;width:50px;height:0;transition:height 3.2s cubic-bezier(0.25,0.46,0.45,0.94);z-index:10}
+.building-6.grown{height:380px}
+.building-6 .body{width:100%;height:100%;background:linear-gradient(180deg,#e0e8f0,#d0d8e0 15%,#b8c4d0 30%,#a0b0c0 50%,#8898a8 70%,#708090 100%);position:relative;border-radius:6px 6px 0 0;box-shadow:-4px 0 15px rgba(0,0,0,0.3),4px 0 15px rgba(0,0,0,0.3)}
+.building-6 .body::before{content:'';position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:22px;height:8px;background:#c0c8d0;border-radius:4px}
+.building-6 .spiral{position:absolute;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(180deg,rgba(220,230,240,0.5) 0,rgba(220,230,240,0.5) 16px,rgba(160,170,180,0.3) 16px,rgba(160,170,180,0.3) 18px)}
+.building-6 .windows{position:absolute;top:8px;left:6px;width:38px;height:360px;background:repeating-linear-gradient(180deg,rgba(200,230,255,0.35) 0,rgba(200,230,255,0.35) 1px,transparent 1px,transparent 3px)}
+
+#timeline-wrap{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:90%;z-index:20;opacity:0;transition:opacity 1.5s}
+#timeline{width:100%;height:8px;background:rgba(255,255,255,0.2);border-radius:4px;overflow:hidden;position:relative}
+#timeline-fill{height:100%;width:0%;background:linear-gradient(90deg,#FFD700,#FFA500,#FF6347);border-radius:4px;transition:width 0.3s}
+#timeline-labels{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.5);margin-top:2px;font-weight:bold;text-shadow:0 0 6px rgba(0,0,0,0.9)}
+.timeline-dot{position:absolute;bottom:-2px;width:10px;height:10px;background:#FFD700;border:2px solid #fff;border-radius:50%;transform:translateX(-50%);box-shadow:0 0 10px rgba(255,215,0,0.6);opacity:0;transition:opacity 0.5s;z-index:21;cursor:pointer}
+.timeline-dot.show{opacity:1}
+#status{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);color:#fff;font-size:14px;text-shadow:0 0 15px rgba(0,0,0,0.9);z-index:10;background:rgba(0,0,0,0.5);padding:5px 20px;border-radius:20px;opacity:0;transition:opacity 0.5s;pointer-events:none;white-space:nowrap}
+#click-hint{position:absolute;bottom:52%;left:50%;transform:translateX(-50%);color:#FFD700;font-size:16px;font-weight:bold;text-shadow:0 0 25px rgba(255,215,0,0.9),0 0 50px rgba(0,0,0,0.8);z-index:15;text-align:center;opacity:0;transition:opacity 0.5s;pointer-events:none}
+#click-hint.show{opacity:1}#click-hint small{display:block;font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px}
+#popup-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:100;display:none;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
+#popup-overlay.active{display:flex}
+#popup{background:#fff;border-radius:18px;max-width:580px;width:90%;box-shadow:0 25px 80px rgba(0,0,0,0.6);animation:popIn 0.35s ease-out;position:relative;overflow:hidden;display:flex;flex-direction:row;min-height:220px}
+@keyframes popIn{from{transform:scale(0.7) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+#popup-photo{width:45%;min-height:220px;overflow:hidden;flex-shrink:0;display:flex;justify-content:center;align-items:center;font-size:40px;color:#fff;font-weight:bold;text-shadow:0 2px 10px rgba(0,0,0,0.5);flex-direction:column;gap:4px}
+#popup-photo img{width:100%;height:100%;object-fit:cover;display:block}
+#popup-content{padding:16px 18px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+#popup-content h2{font-size:18px;color:#222;margin-bottom:2px}
+#popup-content h2 .cn{font-family:'Microsoft YaHei',sans-serif}
+#popup-content .popup-year{font-size:12px;color:#999;margin-bottom:6px}
+#popup-content .popup-desc-cn{font-size:14px;line-height:1.5;color:#444;margin-bottom:3px;font-family:'Microsoft YaHei',sans-serif}
+#popup-content .popup-desc-en{font-size:14px;line-height:1.5;color:#666;margin-bottom:10px}
+#popup-bottom{display:flex;align-items:center;gap:8px;margin-top:auto}
+#popup-close{flex:1;padding:8px 12px;background:#4a6fa5;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;transition:background 0.2s}
+#popup-close:hover{background:#3a5a8a}
+#airplane{position:absolute;top:75px;z-index:12;font-size:28px;opacity:0;user-select:none;pointer-events:none;transition:opacity 2s;filter:drop-shadow(0 0 8px rgba(255,255,255,0.3))}
+#train{position:absolute;bottom:20%;z-index:7;font-size:22px;opacity:0;user-select:none;pointer-events:none;transition:opacity 2s;filter:drop-shadow(0 0 5px rgba(255,255,255,0.2))}
+#restart-btn{position:absolute;bottom:52%;left:50%;transform:translateX(-50%);z-index:30;padding:12px 30px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:30px;color:#1a1a2e;font-size:18px;font-weight:bold;cursor:pointer;box-shadow:0 8px 30px rgba(255,215,0,0.4);opacity:0;transition:opacity 0.5s,transform 0.3s;pointer-events:none;font-family:'Microsoft YaHei',sans-serif;letter-spacing:1px}
+#restart-btn.show{opacity:1;pointer-events:auto}
+#restart-btn:hover{transform:translateX(-50%) scale(1.05);box-shadow:0 12px 40px rgba(255,215,0,0.6)}
+@media(max-width:1120px){#container{width:98vw;height:62vw;max-height:680px}#title-area .cn{font-size:28px}#year-display{font-size:40px;top:80px;padding:5px 20px}}
+@media(max-width:700px){#title-area .cn{font-size:20px;letter-spacing:3px}#title-area .en{font-size:11px}#year-display{font-size:28px;top:65px;padding:4px 14px}.building .label{font-size:9px;top:-38px}.building .year-badge{font-size:11px;top:-60px}}
+</style>
+</head>
+<body>
+<div id="container">
+<div id="sky"></div><div id="sun"></div>
+<div class="cloud cloud1"></div><div class="cloud cloud2"></div><div class="cloud cloud3"></div><div class="cloud cloud4"></div>
+<div id="river-bg"><div class="water"></div><div class="shore"></div></div>
+<div id="city-silhouette"></div><div id="ground"></div>
+<div id="title-area"><div class="cn"><span class="star">★</span> 上海著名建筑 · 百年变迁 <span class="star">★</span></div><div class="en">History of Shanghai's Famous Architecture (1920-2021)</div></div>
+<div id="year-display">1920</div>
+<div id="airplane">&#9992;</div><div id="train">&#128646;</div>
+<div id="buildings-layer">
+<div class="building building-1" data-index="0"><div class="year-badge">1929</div><div class="body"><div class="windows"></div><div class="base"></div></div><div class="label">🏛 和平饭店</div></div>
+<div class="building building-2" data-index="1"><div class="year-badge">1995</div><div class="pole"></div><div class="sphere1"></div><div class="sphere2"></div><div class="sphere3"></div><div class="base"></div><div class="antenna"></div><div class="glow"></div><div class="label">📡 东方明珠塔</div></div>
+<div class="building building-3" data-index="2"><div class="year-badge">1999</div><div class="body"><div class="windows"></div><div class="deco"></div></div><div class="label">🏗 金茂大厦</div></div>
+<div class="building building-4" data-index="3"><div class="year-badge">2008</div><div class="body"><div class="hole"></div><div class="windows"></div><div class="ledge"></div></div><div class="label">🏢 环球金融中心</div></div>
+<div class="building building-5" data-index="4"><div class="year-badge">2010</div><div class="body"><div class="windows"></div></div><div class="label">🎨 中华艺术宫</div></div>
+<div class="building building-6" data-index="5"><div class="year-badge">2015</div><div class="body"><div class="spiral"></div><div class="windows"></div></div><div class="label">🗼 上海中心</div></div>
+</div>
+<div id="timeline-wrap">
+<div id="timeline"><div id="timeline-fill"></div><div id="timeline-dots"></div></div>
+<div id="timeline-labels"><span>1920</span><span>1930</span><span>1940</span><span>1960</span><span>1980</span><span>2000</span><span>2020</span></div>
+</div>
+<div id="status">🌆 上海正在崛起 · Shanghai is rising...</div>
+<div id="click-hint">👆 点击建筑了解更多 · Click to explore!<small>点击空白处继续</small></div>
+<button id="restart-btn">🔄 再看一次 · Watch Again</button>
+<div id="popup-overlay">
+<div id="popup">
+<div id="popup-photo"></div>
+<div id="popup-content">
+<h2><span id="popup-title-cn">建筑名称</span> · <span id="popup-title-en">Building Name</span></h2>
+<div class="popup-year" id="popup-year">建成于 · Built in 1929</div>
+<div class="popup-desc-cn" id="popup-desc-cn">中文介绍。</div>
+<div class="popup-desc-en" id="popup-desc-en">English description.</div>
+<div id="popup-bottom"><button id="popup-close">▶ 继续 · Continue</button></div>
+</div></div></div></div>
+<script>
+// Photo file paths (user-provided, pinyin named)
+var photoFiles = [
+  'photos/hepingfandian.jpg',
+  'photos/dongfangmingzhu.jpg',
+  'photos/jinmaodasha.jpg',
+  'photos/huanqiujinrongzhongxin.png',
+  'photos/zhonghuayishugong.jpg@watermark=0',
+  'photos/shanghaizhongxindasha.jpg'
+];
+
+// 6 famous Shanghai buildings in chronological order
+var buildings = [
+  {nameCn:'和平饭店',nameEn:'Peace Hotel',year:1929,
+   descCn:'和平饭店是外滩最著名的老酒店。1929年建成，拥有美丽的装饰艺术风格。很多国家元首曾住过这里。',
+   descEn:'Peace Hotel is a famous old hotel on the Bund from 1929. It has beautiful Art Deco style. Many leaders from other countries stayed here.'},
+  {nameCn:'东方明珠塔',nameEn:'Oriental Pearl Tower',year:1995,
+   descCn:'东方明珠塔1995年建成，高468米。三个球体夜晚有粉色灯光，是上海标志。',
+   descEn:'The Oriental Pearl Tower was built in 1995. It is 468 meters tall. It has three pink spheres that shine at night. It is the symbol of Shanghai.'},
+  {nameCn:'金茂大厦',nameEn:'Jin Mao Tower',year:1999,
+   descCn:'金茂大厦1999年建成，高421米。设计来自中国古塔的样子。有酒店和办公室。',
+   descEn:'Jin Mao Tower was finished in 1999. It is 421 meters tall. Its look comes from old Chinese pagodas. It has a hotel and offices inside.'},
+  {nameCn:'环球金融中心',nameEn:'Shanghai WFC',year:2008,
+   descCn:'高492米，2008年建成。因为顶部有个洞，人们叫它"开瓶器"。',
+   descEn:'Shanghai WFC is 492 meters tall. People call it the bottle opener. At the top there is a big square hole. You can see the river from floor 100.'},
+  {nameCn:'中华艺术宫',nameEn:'China Art Museum',year:2010,
+   descCn:'2010年世博会的中国国家馆。红色的东方之冠造型非常特别。现在展出中国艺术。',
+   descEn:'This red building was the China Pavilion for the 2010 Expo. Its crown shape is very special. Now it shows Chinese art inside.'},
+  {nameCn:'上海中心大厦',nameEn:'Shanghai Tower',year:2015,
+   descCn:'高632米，中国第一高楼。螺旋形设计可以减少风力。有全球最快的电梯。',
+   descEn:'Shanghai Tower is 632 meters tall. It is the tallest building in China. Its twisty shape makes wind go around. It has the world fastest elevator.'}
+];
+
+var startY=1920, endY=2016; // timeline span
+var year=1920, paused=false, finished=false, bIdx=-1, animId=null;
+var ax=-60, tx=-80; // airplane and train positions
+
+var el = {
+  year: gId('year-display'),
+  fill: gId('timeline-fill'),
+  dots: gId('timeline-dots'),
+  status: gId('status'),
+  hint: gId('click-hint'),
+  restart: gId('restart-btn'),
+  plane: gId('airplane'),
+  train: gId('train'),
+  title: gId('title-area'),
+  river: gId('river-bg'),
+  overlay: gId('popup-overlay'),
+  photo: gId('popup-photo')
+};
+
+function gId(id){return document.getElementById(id);}
+
+// Create timeline dots for each building
+buildings.forEach(function(b, i){
+  var dot = document.createElement('div');
+  dot.className = 'timeline-dot';
+  dot.style.left = ((b.year - startY) / (endY - startY) * 100) + '%';
+  dot.title = b.nameCn + ' (' + b.year + ')';
+  dot.dataset.index = i;
+  el.dots.appendChild(dot);
+});
+
+function updateY(y){
+  el.year.textContent = Math.floor(y);
+  var pct = Math.min((y - startY) / (endY - startY) * 100, 100);
+  el.fill.style.width = pct + '%';
+}
+
+// Show popup with building info
+function showPopup(idx){
+  var b = buildings[idx];
+  el.photo.innerHTML = 
+    '<img src="' + photoFiles[idx] + '" alt="' + b.nameCn + '" style="width:100%;height:100%;object-fit:cover;">';
+  gId('popup-title-cn').textContent = b.nameCn;
+  gId('popup-title-en').textContent = b.nameEn;
+  gId('popup-year').textContent = '建成于 · Built in ' + b.year;
+  gId('popup-desc-cn').textContent = b.descCn;
+  gId('popup-desc-en').textContent = b.descEn;
+  el.overlay.classList.add('active');
+}
+
+// Close popup and resume animation
+function closePopup(e){
+  if(e && e.target !== e.currentTarget) return;
+  el.overlay.classList.remove('active');
+  if(paused){
+    paused = false;
+    el.status.textContent = '🌆 上海正在崛起 · Shanghai is rising...';
+    el.hint.classList.remove('show');
+    anim();
+  }
+}
+
+// ESC key to close popup
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape' && el.overlay.classList.contains('active')){
+    el.overlay.classList.remove('active');
+    if(paused){
+      paused = false;
+      el.status.textContent = '🌆 上海正在崛起 · Shanghai is rising...';
+      el.hint.classList.remove('show');
+      anim();
+    }
+  }
+});
+
+// Start showing a building (grow animation + pause)
+function startB(i){
+  var q = document.querySelector('.building-' + (i+1));
+  if(!q) return;
+  q.classList.add('visible');
+  requestAnimationFrame(function(){
+    q.classList.add('grown');
+    var dots = el.dots.querySelectorAll('.timeline-dot');
+    if(dots[i]) dots[i].classList.add('show');
+  });
+  var growTimes = [2000, 2500, 2800, 3000, 2200, 3200];
+  setTimeout(function(){
+    paused = true;
+    bIdx = i;
+    var b = buildings[i];
+    el.status.textContent = '🏗️ ' + b.nameCn + ' (' + b.year + ') 建成 · Complete!';
+    el.hint.classList.add('show');
+  }, (growTimes[i] || 2500) + 300);
+}
+
+// Main animation loop
+function anim(){
+  if(paused) return;
+  if(year >= endY){
+    if(!finished){
+      finished = true;
+      el.status.textContent = '✨ 上海 · 百年巨变 ✨';
+      el.hint.innerHTML = '🌟 点击建筑了解更多 · 点"再看一次"重播';
+      el.hint.classList.add('show');
+      el.restart.classList.add('show');
+    }
+    return;
+  }
+  // Slow speed: ~30 seconds total experience
+  year += 0.5;
+  updateY(year);
+
+  // Move airplane and train
+  ax += 0.4;
+  if(ax > 120) ax = -60;
+  el.plane.style.left = ax + '%';
+  tx += 0.5;
+  if(tx > 120) tx = -80;
+  el.train.style.left = tx + '%';
+
+  // Check if any new building should appear
+  for(var i = 0; i < buildings.length; i++){
+    if(i <= bIdx) continue;
+    var q = document.querySelector('.building-' + (i+1));
+    if(!q.classList.contains('visible') && year >= buildings[i].year){
+      startB(i);
+      return;
+    }
+  }
+  animId = requestAnimationFrame(anim);
+}
+
+// Start everything
+function startAnim(){
+  el.title.style.opacity = '1';
+  el.year.style.opacity = '1';
+  gId('timeline-wrap').style.opacity = '1';
+  el.river.style.opacity = '1';
+  el.status.style.opacity = '1';
+  el.plane.style.opacity = '1';
+  el.train.style.opacity = '1';
+  setTimeout(function(){ anim(); }, 1200);
+}
+
+// Restart button
+el.restart.addEventListener('click', function(){
+  if(animId) cancelAnimationFrame(animId);
+  finished = false;
+  paused = false;
+  year = 1920;
+  bIdx = -1;
+  ax = -60;
+  tx = -80;
+  document.querySelectorAll('.building').forEach(function(q){ q.classList.remove('visible', 'grown'); });
+  document.querySelectorAll('.timeline-dot').forEach(function(q){ q.classList.remove('show'); });
+  el.restart.classList.remove('show');
+  el.hint.classList.remove('show');
+  el.hint.innerHTML = '👆 点击建筑了解更多 · Click to explore!<small>点击空白处继续</small>';
+  el.status.textContent = '🌆 上海正在崛起 · Shanghai is rising...';
+  updateY(1920);
+  setTimeout(function(){ anim(); }, 500);
+});
+
+// Click overlay to close popup
+el.overlay.addEventListener('click', closePopup);
+document.getElementById('popup-close').addEventListener('click', function(){ closePopup(null); });
+
+// Click empty area to resume after building appears
+gId('container').addEventListener('click', function(e){
+  if(paused && !el.overlay.classList.contains('active') && !e.target.closest('.building') && !finished){
+    paused = false;
+    el.status.textContent = '🌆 上海正在崛起 · Shanghai is rising...';
+    el.hint.classList.remove('show');
+    anim();
+  }
+});
+
+// Set click handlers for each building
+for(var i = 0; i < buildings.length; i++){
+  (function(idx){
+    var q = document.querySelector('.building-' + (idx+1));
+    if(q) q.onclick = function(){ showPopup(idx); };
+  })(i);
+}
+
+// Start on load
+window.addEventListener('load', function(){ setTimeout(startAnim, 400); });
+</script>
+</body>
+</html>
